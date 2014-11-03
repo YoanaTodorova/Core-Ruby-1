@@ -18,8 +18,16 @@ module MyEnumerable
   end
 
   def reduce(initial = nil)
-    result = initial || self[0]
-    each { |el| result = yield result, el }
+    result = initial
+    index = 0
+    each do |el|
+      if index == 0
+        result ||= el
+        index = 1
+      else
+        result = yield result, el
+      end
+    end
     result
   end
 
@@ -66,31 +74,73 @@ module MyEnumerable
   end
 
   def group_by
-
+    Hash.new([]).tap do |hash|
+      each { |el| hash[yield el] << el }
+    end
   end
 
   def min
-    # Your code goes here.
+    index = 0
+    min = nil
+    each do |el|
+      if index == 0
+        min = el
+        index = 1
+      else
+        min = el if el < min
+      end
+    end
+    min
   end
 
   def min_by
-    # Your code goes here.
+    index = 0
+    min = nil
+    each do |el|
+      if index == 0
+        min = el
+        index = 1
+      else
+        min = el if yield(el) < yield(min)
+      end
+    end
+    min
   end
 
   def max
-    # Your code goes here.
+    index = 0
+    max = nil
+    each do |el|
+      if index == 0
+        max = el
+        index = 1
+      else
+        max = el if el > max
+      end
+    end
+    max
   end
 
   def max_by
-    # Your code goes here.
+    index = 0
+    max = nil
+    each do |el|
+      if index == 0
+        max = el
+        index = 1
+      else
+        max = el if yield(el) > yield(max)
+      end
+    end
+    max
   end
 
   def minmax
-    # Your code goes here.
+    [min, max]
   end
 
-  def minmax_by
-    # Your code goes here.
+  def minmax_by(&block)
+    [min_by(&block), max_by(&block)]
   end
 
   def take(n)
@@ -127,7 +177,7 @@ module MyEnumerable
   end
 end
 
-class Co
+class Collection
   include MyEnumerable
 
   def initialize(*data)
