@@ -50,8 +50,9 @@ class SolutionTest < Minitest::Test
   end
 
   def test_group_by
-    assert_equal {true=>[1,3,5,7,9], false=>[2,4,6,8,10]},
-                 COLL.group_by { |n| n.odd? }
+    collection = Collection.new 1,2
+    expected = {0=>[2], 1=>[1]}
+    assert_equal expected, collection.group_by { |n| n % 2 }
   end
 
   def test_min
@@ -77,7 +78,7 @@ class SolutionTest < Minitest::Test
   end
 
   def test_minmax_by
-    assert_equal %w(a abv), %(a ab abv).minmax_by { |n| n.length }
+    assert_equal %w(a abv), %w(a ab abv).minmax_by { |n| n.length }
   end
 
   def test_take

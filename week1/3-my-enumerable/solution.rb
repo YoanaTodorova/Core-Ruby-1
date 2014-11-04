@@ -74,8 +74,8 @@ module MyEnumerable
   end
 
   def group_by
-    Hash.new([]).tap do |hash|
-      each { |el| hash[yield el] << el }
+    Hash.new { |hsh, key| hsh[key] = [] }.tap do |hsh|
+      each { |el| hsh[yield(el)] << el }
     end
   end
 
