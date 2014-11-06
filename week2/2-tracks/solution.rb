@@ -24,12 +24,12 @@ class Track
   attr_accessor :artist, :name, :album, :genre
 
   def initialize(*args)
-    @artist, @name, @album, @genre = if args[0].is_a? Hash
-                                       [args[0][:artist], args[0][:name], args[0][:album], args[0][:genre]]
-                                     else
-                                      raise ArgumentError if args.size < 4
-                                      args
-                                     end
+    if args[0].is_a? Hash
+      args[0].each { |key,value| public_send("#{key}=".to_sym, value) }
+    else
+      raise ArgumentError if args.size < 4
+      @artist, @name, @album, @genre = args
+    end
   end
 
   def ==(other)
