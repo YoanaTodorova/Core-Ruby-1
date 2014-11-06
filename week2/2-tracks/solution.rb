@@ -1,12 +1,35 @@
 require 'yaml'
 
+class HashWithIndifferentAccess < Hash
+  def [](key)
+    super(key.to_sym)
+  end
+
+  def []=(key, value)
+    super(key.to_sym, value)
+  end
+
+  def fetch(key)
+    super(key.to_sym)
+  end
+end
+
+class Hash
+  def with_indifferent_access
+    HashWithIndifferentAccess.new(self)
+  end
+end
+
 class Track
   attr_accessor :artist, :name, :album, :genre
 
-  # TODO: make it possible to pass artist: ...
   def initialize(*args)
-    raise ArgumentError if args.size < 4
-    @artist, @name, @album, @genre = args
+    @artist, @name, @album, @genre = if args[0].is_a? Hash
+                                       [args[0][:artist], args[0][:name], args[0][:album], args[0][:genre]]
+                                     else
+                                      raise ArgumentError if args.size < 4
+                                      args
+                                     end
   end
 
   def ==(other)
@@ -28,8 +51,10 @@ class Playlist
   end
 
   def self.from_yaml(path)
-    tracks = YAML.load_file(path).map(&:values).map do |values|
-      Track.new(*values)
+    tracks = YAML.load_file(path).map do |attributes|
+      h = Hash.new.with_indifferent_access
+      attributes.each { |key, value| h[key] = value }
+      Track.new(h)
     end
     Playlist.new tracks
   end
