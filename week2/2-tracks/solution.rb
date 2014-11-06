@@ -1,3 +1,5 @@
+require 'yaml'
+
 class Track
   attr_accessor :artist, :name, :album, :genre
 
@@ -7,6 +9,12 @@ class Track
     @artist, @name, @album, @genre = args
   end
 
+  def ==(other)
+    @artist == other.artist &&
+    @name   == other.name   &&
+    @album  == other.album  &&
+    @genre  == other.genre
+  end
 end
 
 class Playlist
@@ -20,7 +28,10 @@ class Playlist
   end
 
   def self.from_yaml(path)
-    # Your code goes here.
+    tracks = YAML.load_file(path).map(&:values).map do |values|
+      Track.new(*values)
+    end
+    Playlist.new tracks
   end
 
   def find
@@ -28,11 +39,10 @@ class Playlist
   end
 
   def find_by(*filters)
-    # Filter is any object that responds to the method #call. #call accepts one
-    # argument, the track it should match or not match.
-    #
-    # Should return a new Playlist.
-    Playlist.new @tracks.select 
+    tracks = @tracks.select do |track|
+      filters.all? { |filter| filter.call(track) }
+    end
+    Playlist.new tracks
   end
 
   def find_by_name(name)
@@ -60,8 +70,11 @@ class Playlist
   end
 
   def to_s
-    # It should return a nice tabular representation of all the tracks.
-    # Checkout the String class for something that can help you with that.
+    @tracks.map do |track|
+      [:artist, :name, :album, :genre].map do |attribute|
+        "#{track.public_send(attribute).ljust(30)}"
+      end.join ''
+    end.join "\n"
   end
 
   def &(playlist)
@@ -77,12 +90,17 @@ class Playlist
   end
 
   def ==(playlist)
-    @tracks == playlist.each.to_a
+    index = 0
+    playlist.each do |track|
+      return false if track != @tracks[index]
+      index += 1
+    end
+    true
   end
 
   private
 
   def find_by_attribute(attribute, value)
-    Playlist.new @tracks.filter { |track| track.send(attribute) == value }
+    Playlist.new @tracks.filter { |track| track.public_send(attribute) == value }
   end
 end
