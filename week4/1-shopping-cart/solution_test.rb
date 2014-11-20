@@ -15,19 +15,35 @@ class SolutionTest < Minitest::Test
   end
 
   def test_total
-  inventory = Inventory.new
-  inventory.register 'Green Tea', '1.99'
-  inventory.register 'Red Tea',   '2.49'
-  inventory.register 'Earl Grey', '1.49'
+    inventory = Inventory.new
+    inventory.register 'Green Tea', '1.99'
+    inventory.register 'Red Tea',   '2.49'
+    inventory.register 'Earl Grey', '1.49'
 
-  cart = inventory.new_cart
+    cart = inventory.new_cart
 
-  cart.add 'Green Tea'
-  cart.add 'Red Tea', 2
-  cart.add 'Green Tea', 2
+    cart.add 'Green Tea'
+    cart.add 'Red Tea', 2
+    cart.add 'Green Tea', 2
 
-  cart.total # връща '10.95'.to_d 
-  assert_equal '10.95'.to_d, cart.total
+    cart.total # връща '10.95'.to_d 
+    assert_equal '10.95'.to_d, cart.total
+  end
+
+  def test_invoice
+    inventory = Inventory.new
+    inventory.register 'Green Tea', '1.99'
+    inventory.register 'Red Tea',   '2.49'
+    inventory.register 'Earl Grey', '1.49'
+
+    cart = inventory.new_cart
+
+    cart.add 'Green Tea'
+    cart.add 'Red Tea', 2
+    cart.add 'Green Tea', 2
+
+    puts "invoiceeeeeeee"
+    puts cart.invoice
   end
 end
 
