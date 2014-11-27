@@ -8,3 +8,9 @@ class String
     end
   end
 end
+
+class NilClass
+  def method_missing(*)
+    nil
+  end
+end
