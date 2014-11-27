@@ -14,3 +14,9 @@ class NilClass
     nil
   end
 end
+
+class Object
+  def define_singleton_method(name, &implementation)
+    singleton_class.send(:define_method, name, &implementation)
+  end
+end
