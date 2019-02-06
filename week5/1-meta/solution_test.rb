@@ -27,7 +27,7 @@ class SolutionTest < Minitest::Test
 
   def test_proxy
     proxy = Proxy.new [1,2,3]
-    assert_equal [2], proxy & [2]
+    assert_equal [2], proxy & []
   end
 
   def test_delegate
